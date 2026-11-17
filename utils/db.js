@@ -1,36 +1,42 @@
 import mongoose from 'mongoose';
 
-const connection = {};
+// One shared connection per server instance, cached on `global` so it survives
+// Next.js hot reloads in development and warm invocations on Vercel.
+const cached = global._mongoose || (global._mongoose = { conn: null, promise: null });
 
 async function connect() {
-	if (connection.isConnected) {
-		console.log('Already connected');
-		return;
+	if (cached.conn && mongoose.connection.readyState === 1) {
+		return cached.conn;
 	}
-	if (mongoose.connections.length > 0) {
-		connection.isConnected = mongoose.connections[0].readyState;
-		if (connect.isConnected === 1) {
-			console.log('Connection already exist');
-			return;
-		}
-		// Disconnect becuase it's not in connected mode
-		await mongoose.disconnect();
+
+	const uri = process.env.MONGODB_URI;
+	if (!uri) {
+		throw new Error(
+			'MONGODB_URI is not set. Add it to .env locally, or to Project Settings → Environment Variables on Vercel.'
+		);
 	}
-	const db = await mongoose.connect(process.env.MONGODB_URI);
-	console.log('New connection');
-	connection.isConnected = db.connections[0].readyState;
+
+	if (!cached.promise) {
+		cached.promise = mongoose
+			.connect(uri, { serverSelectionTimeoutMS: 10000 })
+			.catch((err) => {
+				cached.promise = null; // allow a retry on the next request
+				console.error(
+					'MongoDB connection failed. Check MONGODB_URI and that MongoDB Atlas → Network Access allows this server (0.0.0.0/0 for Vercel).',
+					err.message
+				);
+				throw err;
+			});
+	}
+
+	cached.conn = await cached.promise;
+	return cached.conn;
 }
 
-async function disconnect() {
-	if (connection.isConnected) {
-		if (process.env.NODE_ENV === 'production') {
-			await mongoose.disconnect();
-			connection.isConnected = false;
-		} else {
-			console.log('Not disconnected');
-		}
-	}
-}
+// Intentionally a no-op: closing the shared connection after a request breaks
+// other requests still using it (Vercel runs many requests per instance).
+// Scripts that need to exit (seed.js) call mongoose.disconnect() directly.
+async function disconnect() {}
 
 // Make a lean Mongo document safe for getServerSideProps props:
 // ObjectIds become strings, Dates become ISO strings, undefined is dropped.
