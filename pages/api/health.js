@@ -1,6 +1,7 @@
 // GET /api/health — deployment diagnostics.
 // Reports whether configuration looks right and whether MongoDB is reachable,
 // WITHOUT revealing any secret values, hostnames or error messages.
+import { createHash } from 'crypto';
 import db from '../../utils/db';
 import Product from '../../models/Product';
 
@@ -32,12 +33,24 @@ export default async function handler(req, res) {
 		NEXTAUTH_URL: !authUrl ? 'not set (fine on Vercel)' : /^https?:\/\/\S+$/.test(authUrl) ? 'ok' : 'invalid',
 	};
 
+	// One-way fingerprint of the cluster host, so two environments can be compared
+	// ("is Vercel using the same cluster as my .env?") without revealing it.
+	const host = (uri.split('@')[1] || '').split(/[/?]/)[0];
+	config.MONGODB_HOST_FINGERPRINT = host
+		? createHash('sha256').update(host.toLowerCase()).digest('hex').slice(0, 12)
+		: null;
+
 	let database;
 	try {
 		await db.connect();
 		database = { status: 'connected', books: await Product.estimatedDocumentCount() };
 	} catch (err) {
-		database = { status: 'error', type: err?.name || 'Error', hint: hintFor(err) };
+		database = {
+			status: 'error',
+			type: err?.name || 'Error',
+			code: err?.code || err?.cause?.code || null,
+			hint: hintFor(err),
+		};
 	}
 
 	res.setHeader('Cache-Control', 'no-store');
