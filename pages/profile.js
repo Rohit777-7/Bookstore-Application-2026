@@ -1,6 +1,6 @@
 import { signIn, useSession } from 'next-auth/react';
 import { useForm } from 'react-hook-form';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 
 import Layout from '../components/Layout';
 import Styles from './form.module.scss';
@@ -9,7 +9,6 @@ import { playSound } from '../utils/sound';
 
 const Profile = () => {
 	const { data: session } = useSession();
-	const [customError, setCustomError] = useState(null);
 	const toast = useToast();
 
 	const {
@@ -103,14 +102,6 @@ const Profile = () => {
 						disabled
 						{...register('email')}
 					/>
-
-					{customError ? (
-						<p>
-							<span className={Styles.error} role="alert">
-								{customError}
-							</span>
-						</p>
-					) : null}
 
 					<label htmlFor="password">Password</label>
 					<input

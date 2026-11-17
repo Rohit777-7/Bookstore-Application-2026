@@ -18,7 +18,7 @@ const Register = () => {
 		if (session?.user) {
 			router.push(redirect || '/');
 		}
-	}, [session, router]);
+	}, [session, router, redirect]);
 
 	const {
 		register,
@@ -60,6 +60,9 @@ const Register = () => {
 					email,
 					password,
 				});
+				if (result?.error) {
+					setCustomError(result.error);
+				}
 			}
 		} catch (err) {
 			setCustomError(err.message);
