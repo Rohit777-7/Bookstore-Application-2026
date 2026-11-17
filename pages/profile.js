@@ -4,10 +4,13 @@ import { useEffect, useState } from 'react';
 
 import Layout from '../components/Layout';
 import Styles from './form.module.scss';
+import { useToast } from '../components/Toast';
+import { playSound } from '../utils/sound';
 
 const Profile = () => {
 	const { data: session } = useSession();
 	const [customError, setCustomError] = useState(null);
+	const toast = useToast();
 
 	const {
 		register,
@@ -39,7 +42,9 @@ const Profile = () => {
 
 			const response = await updateUser.json();
 			if (!updateUser.ok) {
-				alert(response.message);
+				playSound('error');
+				toast({ type: 'error', title: 'Update failed', message: response.message });
+				return;
 			} else {
 				const result = await signIn('credentials', {
 					redirect: false,
@@ -47,12 +52,16 @@ const Profile = () => {
 					password,
 				});
 				if (result.error) {
-					alert(result.error);
+					playSound('error');
+					toast({ type: 'error', title: 'Update failed', message: result.error });
+					return;
 				}
 			}
-			alert('Profile details updated');
+			playSound('add');
+			toast({ title: 'Profile updated', message: 'Your details have been saved.' });
 		} catch (err) {
-			alert(err.message);
+			playSound('error');
+			toast({ type: 'error', title: 'Update failed', message: err.message });
 		}
 	};
 

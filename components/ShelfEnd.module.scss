@@ -1,0 +1,120 @@
+.end {
+	align-items: center;
+	background:
+		radial-gradient(70% 80% at 50% 30%, var(--stage-glow-strong), transparent 70%),
+		repeating-linear-gradient(135deg, transparent 0 18px, var(--surface) 18px 19px),
+		linear-gradient(180deg, var(--surface-2), var(--surface));
+	border: 1px dashed var(--border-strong);
+	border-radius: var(--radius-lg);
+	container-type: inline-size; // lets .inner adapt to the width it spans
+	display: flex;
+	grid-column: auto / -1; // span to the end of the current row
+	min-height: 100%;
+	transition:
+		border-color 0.3s,
+		box-shadow 0.5s;
+
+	&:hover {
+		border-color: var(--gold);
+		box-shadow: var(--glow);
+	}
+
+	&:hover .fanCover {
+		transform: translateX(calc((var(--i) - 1) * 46px)) rotate(calc((var(--i) - 1) * 14deg)) translateY(-6px);
+	}
+}
+
+.inner {
+	align-items: center;
+	display: flex;
+	flex: 1;
+	flex-direction: column;
+	gap: 22px;
+	justify-content: center;
+	padding: 34px 24px;
+	text-align: center;
+}
+
+/* Fan of three small covers */
+.fan {
+	height: 150px;
+	position: relative;
+	width: 200px;
+}
+
+.fanCover {
+	border-radius: 3px;
+	bottom: 0;
+	box-shadow: 8px 12px 24px -10px rgba(0, 0, 0, 0.8);
+	font-size: 8px;
+	height: 135px;
+	left: 50%;
+	margin-left: -45px;
+	overflow: hidden;
+	position: absolute;
+	transform: translateX(calc((var(--i) - 1) * 34px)) rotate(calc((var(--i) - 1) * 10deg));
+	transform-origin: bottom center;
+	transition: transform 0.6s var(--ease-spring);
+	width: 90px;
+	z-index: calc(3 - var(--i));
+
+	&:nth-child(2) {
+		z-index: 3;
+	}
+}
+
+.copy {
+	align-items: center;
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	max-width: 360px;
+
+	h3 {
+		font-size: 28px;
+		line-height: 1.1;
+		margin: 0;
+	}
+}
+
+.eyebrow {
+	color: var(--gold);
+	font-family: var(--font-mark);
+	font-size: 11px;
+	letter-spacing: 0.26em;
+	text-transform: uppercase;
+}
+
+.text {
+	color: var(--text-muted);
+	font-size: 14px;
+}
+
+.actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10px;
+	justify-content: center;
+	margin-top: 10px;
+
+	:global(.button) {
+		padding: 12px 18px;
+	}
+}
+
+// When it spans two or more columns, lay it out as a horizontal banner
+@container (min-width: 520px) {
+	.inner {
+		flex-direction: row;
+		gap: 48px;
+		text-align: left;
+	}
+
+	.copy {
+		align-items: flex-start;
+	}
+
+	.actions {
+		justify-content: flex-start;
+	}
+}

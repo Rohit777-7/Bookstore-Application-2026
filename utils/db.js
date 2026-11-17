@@ -32,11 +32,10 @@ async function disconnect() {
 	}
 }
 
+// Make a lean Mongo document safe for getServerSideProps props:
+// ObjectIds become strings, Dates become ISO strings, undefined is dropped.
 function convertDoctoObj(doc) {
-	doc._id = doc._id.toString();
-	doc.createdAt = doc.createdAt.toString();
-	doc.updatedAt = doc.updatedAt.toString();
-	return doc;
+	return JSON.parse(JSON.stringify(doc));
 }
 
 const db = { connect, disconnect, convertDoctoObj };

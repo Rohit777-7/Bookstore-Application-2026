@@ -1,0 +1,74 @@
+.rail {
+	padding: 56px 0 24px;
+}
+
+.head {
+	align-items: flex-end;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 16px;
+	justify-content: space-between;
+	margin-bottom: 8px;
+}
+
+.controls {
+	align-items: center;
+	display: flex;
+	gap: 10px;
+}
+
+.arrow {
+	align-items: center;
+	background: var(--surface);
+	border: 1px solid var(--border);
+	border-radius: 50%;
+	color: var(--text);
+	cursor: pointer;
+	display: inline-flex;
+	height: 44px;
+	justify-content: center;
+	transition: all 0.3s var(--ease-out);
+	width: 44px;
+
+	&:hover {
+		background: var(--gold-gradient);
+		border-color: transparent;
+		color: var(--on-gold);
+		transform: translateY(-2px);
+	}
+
+	&:active {
+		transform: scale(0.94);
+	}
+}
+
+.track {
+	display: grid;
+	gap: 22px;
+	grid-auto-columns: 250px;
+	grid-auto-flow: column;
+	overflow-x: auto;
+	overscroll-behavior-x: contain;
+	padding: 28px max(16px, calc((100vw - 1240px) / 2 + 20px)) 40px;
+	scroll-padding-inline: max(16px, calc((100vw - 1240px) / 2 + 20px));
+	scroll-snap-type: x mandatory;
+	scrollbar-width: none;
+
+	&::-webkit-scrollbar {
+		display: none;
+	}
+}
+
+.slot {
+	scroll-snap-align: start;
+}
+
+@media (max-width: 600px) {
+	.track {
+		grid-auto-columns: 220px;
+	}
+
+	.arrow {
+		display: none;
+	}
+}

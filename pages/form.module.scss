@@ -1,61 +1,147 @@
 .form {
-	font-size: 17px;
-	margin: auto;
-	max-width: 512px;
+	backdrop-filter: blur(14px);
+	background:
+		radial-gradient(90% 60% at 100% 0%, var(--stage-glow), transparent 60%),
+		linear-gradient(160deg, var(--surface-2), var(--surface));
+	border: 1px solid var(--border-strong);
+	border-radius: 28px;
+	box-shadow: var(--shadow-2);
+	font-size: 15px;
+	margin: 20px auto 0;
+	max-width: 520px;
+	padding: 44px 36px 32px;
+	position: relative;
+
+	&::before {
+		background: var(--gold-gradient);
+		border-radius: 2px;
+		content: '';
+		height: 2px;
+		left: 50%;
+		position: absolute;
+		top: -1px;
+		transform: translateX(-50%);
+		width: 120px;
+	}
+
+	@media (max-width: 520px) {
+		padding: 34px 22px 26px;
+	}
 
 	h2 {
-		font-size: 30px;
-		margin-bottom: 35px;
+		font-size: clamp(36px, 5vw, 46px);
+		font-weight: 500;
+		margin-bottom: 30px;
+		text-align: center;
 	}
 
 	label {
+		color: var(--text-muted);
 		display: block;
-		margin-bottom: 10px;
+		font-size: 12px;
+		font-weight: 600;
+		letter-spacing: 0.14em;
+		margin-bottom: 8px;
+		text-transform: uppercase;
 	}
-	input {
-		border: 1px solid rgba(34, 36, 38, 0.2);
-		border-radius: 6px;
-		color: rgba(0, 0, 0, 0.87);
+
+	input:not([type='radio']):not([type='checkbox']) {
+		background: var(--surface-solid);
+		border: 1px solid var(--border);
+		border-radius: 14px;
+		color: var(--text);
 		font-size: 15px;
 		margin-bottom: 20px;
-		padding: 10px;
+		padding: 14px 16px;
+		transition: border-color 0.25s, box-shadow 0.25s;
 		width: 100%;
 
+		&::placeholder {
+			color: var(--text-dim);
+		}
+
 		&:focus {
-			border-color: #76836e;
+			border-color: var(--gold);
+			box-shadow: 0 0 0 4px rgba(212, 175, 106, 0.15);
 			outline: 0;
 		}
 	}
 
 	button {
 		margin-bottom: 15px;
+		margin-top: 6px;
 		width: 100%;
 	}
 
-	.input_block {
-		margin-bottom: 25px;
+	p {
+		color: var(--text-muted);
+		text-align: center;
 
-		input,
+		a {
+			color: var(--gold);
+			font-weight: 600;
+			text-decoration: underline;
+			text-underline-offset: 3px;
+		}
+	}
+
+	// Payment method radio cards
+	.input_block {
+		align-items: center;
+		background: var(--surface-solid);
+		border: 1px solid var(--border);
+		border-radius: 16px;
+		cursor: pointer;
+		display: flex;
+		gap: 12px;
+		margin-bottom: 14px;
+		padding: 16px 18px;
+		transition: border-color 0.25s, transform 0.3s var(--ease-out);
+
+		&:hover {
+			border-color: var(--border-strong);
+			transform: translateX(4px);
+		}
+
+		&:has(input:checked) {
+			border-color: var(--gold);
+			box-shadow: var(--glow);
+		}
+
+		input {
+			accent-color: var(--gold);
+			height: 18px;
+			margin: 0;
+			width: 18px;
+		}
+
 		label {
-			display: inline-block;
-			width: auto;
+			color: var(--text);
+			cursor: pointer;
+			font-size: 15px;
+			letter-spacing: 0.02em;
+			margin: 0;
+			text-transform: none;
 		}
 	}
 
 	.buttons_wrap {
 		display: flex;
+		gap: 12px;
 		justify-content: space-between;
+		margin-top: 20px;
 
 		button {
-			width: auto;
+			flex: 1;
 			min-width: 100px;
+			width: auto;
 		}
 	}
 
 	.error {
-		color: red;
+		color: var(--wine-light);
 		display: block;
-		font-size: 90%;
-		margin: -15px 0 20px;
+		font-size: 13px;
+		margin: -12px 0 18px;
 	}
 }

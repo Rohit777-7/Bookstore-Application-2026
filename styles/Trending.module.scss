@@ -1,0 +1,228 @@
+.hero {
+	--page-hero-image: radial-gradient(60% 80% at 50% 100%, rgba(240, 138, 93, 0.25), transparent 70%);
+}
+
+// Rising ember particles behind the title
+.flames {
+	background-image:
+		radial-gradient(2px 2px at 20% 80%, #f6c27a, transparent),
+		radial-gradient(2px 2px at 40% 90%, #f08a5d, transparent),
+		radial-gradient(1.5px 1.5px at 60% 85%, #f6e2b0, transparent),
+		radial-gradient(2px 2px at 75% 95%, #f08a5d, transparent),
+		radial-gradient(1.5px 1.5px at 88% 82%, #f6c27a, transparent),
+		radial-gradient(2px 2px at 10% 92%, #f6e2b0, transparent);
+	background-size: 100% 100%;
+	animation: embers 7s linear infinite;
+	inset: 0;
+	opacity: 0.7;
+	pointer-events: none;
+	position: absolute;
+	z-index: -1;
+}
+
+@keyframes embers {
+	from {
+		transform: translateY(0);
+		opacity: 0.8;
+	}
+	to {
+		transform: translateY(-60%);
+		opacity: 0;
+	}
+}
+
+.stats {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 14px;
+	justify-content: center;
+	margin-top: 34px;
+
+	li {
+		backdrop-filter: blur(10px);
+		background: var(--surface);
+		border: 1px solid var(--border);
+		border-radius: 16px;
+		display: flex;
+		flex-direction: column;
+		min-width: 150px;
+		padding: 14px 20px;
+	}
+
+	strong {
+		font-family: var(--font-display);
+		font-size: 32px;
+		font-weight: 700;
+		line-height: 1;
+	}
+
+	span {
+		color: var(--text-dim);
+		font-size: 11px;
+		letter-spacing: 0.16em;
+		margin-top: 6px;
+		text-transform: uppercase;
+	}
+}
+
+.tabs {
+	display: flex;
+	gap: 8px;
+	justify-content: center;
+	margin: 0 auto 40px;
+	overflow-x: auto;
+	padding: 6px;
+	scrollbar-width: none;
+
+	&::-webkit-scrollbar {
+		display: none;
+	}
+
+	@media (max-width: 900px) {
+		justify-content: flex-start;
+	}
+}
+
+.tab {
+	background: transparent;
+	border: 1px solid var(--border);
+	border-radius: 999px;
+	color: var(--text-muted);
+	cursor: pointer;
+	flex-shrink: 0;
+	font-size: 13px;
+	font-weight: 600;
+	padding: 10px 16px;
+	transition: all 0.3s var(--ease-out);
+
+	&:hover {
+		border-color: var(--border-strong);
+		color: var(--text);
+	}
+}
+
+.tabActive {
+	background: var(--text);
+	border-color: var(--text);
+	color: var(--bg);
+
+	&:hover {
+		color: var(--bg);
+	}
+}
+
+.chart {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	margin: 50px auto 0;
+	max-width: 980px;
+}
+
+.empty {
+	color: var(--text-muted);
+	padding: 40px 0;
+	text-align: center;
+}
+
+.extras {
+	display: grid;
+	gap: 22px;
+	grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+	margin: 70px auto 0;
+	max-width: 980px;
+}
+
+.panel {
+	background: linear-gradient(160deg, var(--surface-2), var(--surface));
+	border: 1px solid var(--border);
+	border-radius: 24px;
+	padding: 26px;
+
+	h2 {
+		align-items: center;
+		display: flex;
+		font-size: 28px;
+		gap: 10px;
+		margin: 0;
+
+		svg {
+			color: var(--gold);
+		}
+	}
+}
+
+.panelSub {
+	color: var(--text-dim);
+	font-size: 13px;
+	margin: 6px 0 18px;
+}
+
+.climbers {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
+
+.climber {
+	align-items: center;
+	border-radius: 14px;
+	display: flex;
+	gap: 14px;
+	padding: 8px;
+	transition: background 0.2s;
+
+	&:hover {
+		background: var(--surface-2);
+	}
+}
+
+.climberCover {
+	border-radius: 3px;
+	box-shadow: 4px 6px 14px -6px rgba(0, 0, 0, 0.7);
+	flex-shrink: 0;
+	font-size: 7px;
+	height: 60px;
+	overflow: hidden;
+	width: 40px;
+}
+
+.climberInfo {
+	display: flex;
+	flex: 1;
+	flex-direction: column;
+	min-width: 0;
+
+	strong {
+		font-family: var(--font-display);
+		font-size: 18px;
+		font-weight: 600;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+
+	span {
+		color: var(--text-muted);
+		font-size: 12px;
+	}
+}
+
+.growth {
+	color: var(--success);
+	font-family: var(--font-display);
+	font-size: 22px;
+	font-weight: 700;
+}
+
+.method {
+	align-items: center;
+	color: var(--text-dim);
+	display: flex;
+	font-size: 12px;
+	gap: 8px;
+	justify-content: center;
+	margin: 40px auto 0;
+	max-width: 680px;
+	text-align: center;
+}

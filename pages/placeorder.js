@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
-import Image from 'next/image';
+/* eslint-disable @next/next/no-img-element */
 import Link from 'next/link';
 import axios from 'axios';
 import Cookies from 'js-cookie';
@@ -8,6 +8,10 @@ import Cookies from 'js-cookie';
 import CheckoutProgress from '../components/CheckoutProgress';
 import Layout from '../components/Layout';
 import { Store } from '../utils/Store';
+import { useToast } from '../components/Toast';
+import { playSound } from '../utils/sound';
+import { formatPrice } from '../utils/catalog';
+import { priceOrder } from '../utils/pricing';
 
 import Styles from './order.module.scss';
 import TableStyles from './table.module.scss';
@@ -17,17 +21,12 @@ export default function PlaceOrderScreen() {
 	const { cart } = state;
 	const { cartItems, shippingAddress, paymentMethod } = cart;
 
-	const round2 = (num) => Math.round(num * 100 + Number.EPSILON) / 100;
-
-	const itemsPrice = round2(
-		cartItems.reduce((a, c) => a + c.quantity * c.price, 0)
-	); // 123.4567 => 123.46
-
-	const shippingPrice = itemsPrice > 200 ? 0 : 15;
-	const taxPrice = round2(itemsPrice * 0.15);
-	const totalPrice = round2(itemsPrice + shippingPrice + taxPrice);
+	// Shown for review only — the server recalculates every amount from the
+	// database when the order is placed (see utils/pricing.js).
+	const { itemsPrice, shippingPrice, taxPrice, totalPrice } = priceOrder(cartItems);
 
 	const router = useRouter();
+	const toast = useToast();
 	useEffect(() => {
 		if (!paymentMethod) {
 			router.push('/payment');
@@ -39,14 +38,11 @@ export default function PlaceOrderScreen() {
 	const placeOrderHandler = async () => {
 		try {
 			setLoading(true);
+			// Only which books and how many — never prices or totals.
 			const { data } = await axios.post('/api/orders', {
-				orderItems: cartItems,
+				orderItems: cartItems.map(({ slug, quantity }) => ({ slug, quantity })),
 				shippingAddress,
 				paymentMethod,
-				itemsPrice,
-				shippingPrice,
-				taxPrice,
-				totalPrice,
 			});
 			setLoading(false);
 			dispatch({ type: 'CART_CLEAR_ITEMS' });
@@ -57,10 +53,18 @@ export default function PlaceOrderScreen() {
 					cartItems: [],
 				})
 			);
-			router.push(`/order/${data._id}`);
+			router.push(`/order/${data._id}?placed=1`);
 		} catch (err) {
 			setLoading(false);
-			alert(err.message);
+			playSound('error');
+			const outOfStock = err.response?.status === 409;
+			toast({
+				type: 'error',
+				title: outOfStock ? 'Stock changed' : 'Order failed',
+				message: err.response?.data?.message || err.message,
+				action: outOfStock ? { href: '/cart', label: 'Update bag' } : undefined,
+				duration: 7000,
+			});
 		}
 	};
 
@@ -113,14 +117,14 @@ export default function PlaceOrderScreen() {
 												<tr key={item._id}>
 													<td>
 														<Link
-															href={`/product/${item.slug}`}
+															href={`/books/${item.slug}`}
 														>
 															<a
 																className={
 																	Styles.product_name
 																}
 															>
-																<Image
+																<img
 																	src={
 																		item.image
 																	}
@@ -129,7 +133,7 @@ export default function PlaceOrderScreen() {
 																	}
 																	width={50}
 																	height={50}
-																></Image>
+																/>
 																<strong>
 																	{item.name}
 																</strong>
@@ -137,12 +141,8 @@ export default function PlaceOrderScreen() {
 														</Link>
 													</td>
 													<td>{item.quantity}</td>
-													<td>Rs.{item.price}</td>
-													<td>
-														Rs.
-														{item.quantity *
-															item.price}
-													</td>
+													<td>{formatPrice(item.price)}</td>
+													<td>{formatPrice(item.quantity * item.price)}</td>
 												</tr>
 											))}
 											<tr>
@@ -164,49 +164,64 @@ export default function PlaceOrderScreen() {
 								<h3>Order Summary</h3>
 								<ul>
 									<li>
-										<div
-											className={Styles.order_summary_row}
-										>
-											<div>Items</div>
-											<div>Rs.{itemsPrice}</div>
+										<div className={Styles.order_summary_row}>
+											<div>Items ({cartItems.reduce((a, c) => a + c.quantity, 0)})</div>
+											<div>{formatPrice(itemsPrice)}</div>
 										</div>
 									</li>
 									<li>
-										<div
-											className={Styles.order_summary_row}
-										>
-											<div>Tax</div>
-											<div>Rs.{taxPrice}</div>
+										<div className={Styles.order_summary_row}>
+											<div>Tax (15%)</div>
+											<div>{formatPrice(taxPrice)}</div>
 										</div>
 									</li>
 									<li>
-										<div
-											className={Styles.order_summary_row}
-										>
+										<div className={Styles.order_summary_row}>
 											<div>Shipping</div>
-											<div>Rs.{shippingPrice}</div>
+											<div>
+												{shippingPrice ? formatPrice(shippingPrice) : <span className={Styles.free}>Free</span>}
+											</div>
 										</div>
 									</li>
 									<li>
-										<div
-											className={Styles.order_summary_row}
-										>
+										<div className={Styles.order_summary_row}>
 											<div>Total</div>
-											<div>Rs.{totalPrice}</div>
+											<div>{formatPrice(totalPrice)}</div>
 										</div>
 									</li>
 									<li>
 										<button
 											disabled={loading}
 											onClick={placeOrderHandler}
-											className={`${Styles.order_button} button`}
+											className={`${Styles.order_button} button button--lg`}
+											data-sound="add"
 										>
-											{loading
-												? 'Loading...'
-												: 'Place Order'}
+											{loading ? 'Placing order…' : 'Place Order'}
 										</button>
 									</li>
 								</ul>
+							</div>
+
+							<div className={Styles.action_block}>
+								<h3>What happens next</h3>
+								<ol className={Styles.tracker}>
+									{[
+										['Confirmation', 'Your order and invoice appear instantly'],
+										['Download invoice', 'Get a PDF copy from the order page'],
+										['Packed & shipped', 'Your books are wrapped with care'],
+										['Delivered', 'Straight to the address above'],
+									].map(([label, note], i) => (
+										<li key={label}>
+											<span className={Styles.trackDot} aria-hidden="true">
+												{i + 1}
+											</span>
+											<div>
+												<strong>{label}</strong>
+												<span>{note}</span>
+											</div>
+										</li>
+									))}
+								</ol>
 							</div>
 						</div>
 					</div>

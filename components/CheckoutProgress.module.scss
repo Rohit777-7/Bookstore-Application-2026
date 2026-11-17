@@ -1,19 +1,88 @@
 .CheckoutProgress {
-	margin-bottom: 45px;
+	margin: 0 auto 44px;
+	max-width: 720px;
 
-	ul {
+	ol {
 		display: flex;
+		justify-content: space-between;
+		position: relative;
+
+		// track + animated fill
+		&::before,
+		&::after {
+			content: '';
+			height: 2px;
+			left: 22px;
+			position: absolute;
+			top: 21px;
+		}
+
+		&::before {
+			background: var(--border);
+			right: 22px;
+		}
+
+		&::after {
+			animation: grow 1s var(--ease-out) both;
+			background: var(--gold-gradient);
+			width: calc((100% - 44px) * var(--progress));
+		}
 	}
 
 	li {
-		flex: 1;
-		text-align: center;
-		border-bottom: 1px solid #76836e;
-		opacity: 0.6;
-		padding: 10px;
+		align-items: center;
+		color: var(--text-dim);
+		display: flex;
+		flex-direction: column;
+		gap: 10px;
+		position: relative;
+		z-index: 1;
 	}
+}
 
-	.active {
-		opacity: 1;
+@keyframes grow {
+	from {
+		width: 0;
+	}
+}
+
+.dot {
+	align-items: center;
+	background: var(--surface-solid);
+	border: 1px solid var(--border-strong);
+	border-radius: 50%;
+	display: inline-flex;
+	font-weight: 700;
+	height: 44px;
+	justify-content: center;
+	transition: all 0.4s var(--ease-out);
+	width: 44px;
+}
+
+.label {
+	font-size: 12px;
+	font-weight: 600;
+	letter-spacing: 0.12em;
+	text-transform: uppercase;
+}
+
+.active {
+	color: var(--text);
+
+	.dot {
+		background: var(--gold-gradient);
+		border-color: transparent;
+		color: var(--on-gold);
+	}
+}
+
+.current .dot {
+	box-shadow: 0 0 0 6px rgba(212, 175, 106, 0.18), var(--glow);
+}
+
+@media (max-width: 520px) {
+	.label {
+		font-size: 10px;
+		letter-spacing: 0.06em;
 	}
 }

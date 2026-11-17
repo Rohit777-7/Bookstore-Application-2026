@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useMemo, useState } from 'react';
+import React, { createContext, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import Styles from './DropdownMenu.module.scss';
 
 const DropdownContext = createContext();
@@ -13,37 +13,43 @@ function useDropdownContext() {
 	return context;
 }
 
-export function DropdownMenu(props) {
+export function DropdownMenu({ className, children }) {
 	const [on, setOn] = useState(false);
+	const ref = useRef(null);
 	const value = useMemo(() => ({ on, setOn }), [on]);
-	const customClasses = props.className
-		? `${props.className} ${Styles.dropdown_menu}`
-		: Styles.dropdown_menu;
-	let customProps = { ...props, className: customClasses };
+
+	// Close on outside click or Escape
+	useEffect(() => {
+		if (!on) return;
+		const onDown = (e) => !ref.current?.contains(e.target) && setOn(false);
+		const onKey = (e) => e.key === 'Escape' && setOn(false);
+		document.addEventListener('mousedown', onDown);
+		document.addEventListener('keydown', onKey);
+		return () => {
+			document.removeEventListener('mousedown', onDown);
+			document.removeEventListener('keydown', onKey);
+		};
+	}, [on]);
 
 	return (
 		<DropdownContext.Provider value={value}>
-			<div className={customClasses} {...customProps}>
-				{props.children}
+			<div ref={ref} className={className ? `${className} ${Styles.dropdown_menu}` : Styles.dropdown_menu}>
+				{children}
 			</div>
 		</DropdownContext.Provider>
 	);
 }
 
-export function MenuButton(props) {
+export function MenuButton({ className, children }) {
 	const { on, setOn } = useDropdownContext();
-	const customClasses = props.className
-		? `${props.className} ${Styles.menu_button}`
-		: Styles.dropdown_menu;
 	return (
 		<button
-			className={customClasses}
+			className={className ? `${className} ${Styles.menu_button}` : Styles.menu_button}
 			onClick={() => setOn(!on)}
 			aria-haspopup="true"
 			aria-expanded={on}
-			tabIndex="0"
 		>
-			{props.children}
+			{children}
 		</button>
 	);
 }

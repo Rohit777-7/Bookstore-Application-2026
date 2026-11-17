@@ -1,0 +1,92 @@
+.section {
+	padding: 70px 0;
+}
+
+.moods {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10px;
+	justify-content: center;
+	margin-bottom: 30px;
+}
+
+.mood {
+	align-items: center;
+	background: var(--surface);
+	border: 1px solid var(--border);
+	border-radius: 999px;
+	color: var(--text-muted);
+	cursor: pointer;
+	display: inline-flex;
+	font-size: 14px;
+	font-weight: 600;
+	gap: 8px;
+	padding: 10px 18px 10px 12px;
+	transition: all 0.35s var(--ease-out);
+
+	&:hover {
+		border-color: var(--border-strong);
+		color: var(--text);
+		transform: translateY(-3px);
+	}
+
+	&:hover .emoji {
+		transform: scale(1.25) rotate(-10deg);
+	}
+}
+
+.emoji {
+	align-items: center;
+	background: var(--surface-2);
+	border-radius: 50%;
+	display: inline-flex;
+	font-size: 16px;
+	height: 30px;
+	justify-content: center;
+	transition: transform 0.4s var(--ease-spring);
+	width: 30px;
+}
+
+.active {
+	background: var(--gold-gradient);
+	border-color: transparent;
+	box-shadow: 0 12px 26px -12px rgba(212, 175, 106, 0.7);
+	color: var(--on-gold);
+
+	&:hover {
+		color: var(--on-gold);
+	}
+
+	.emoji {
+		background: rgba(255, 255, 255, 0.35);
+	}
+}
+
+.actions {
+	align-items: center;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 16px;
+	justify-content: center;
+	margin-top: 30px;
+}
+
+.surprise {
+	align-items: center;
+	background: none;
+	border: 0;
+	color: var(--gold);
+	cursor: pointer;
+	display: inline-flex;
+	font-size: 14px;
+	font-weight: 700;
+	gap: 8px;
+
+	svg {
+		transition: transform 0.6s var(--ease-spring);
+	}
+
+	&:hover svg {
+		transform: rotate(180deg) scale(1.1);
+	}
+}

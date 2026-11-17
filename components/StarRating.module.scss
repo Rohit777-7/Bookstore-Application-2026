@@ -1,0 +1,39 @@
+.rating {
+	align-items: center;
+	display: inline-flex;
+	font-size: var(--size);
+	gap: 6px;
+	line-height: 1;
+}
+
+.stars {
+	display: inline-block;
+	letter-spacing: 2px;
+	position: relative;
+}
+
+.base {
+	color: var(--star-empty);
+}
+
+.fill {
+	background: var(--gold-gradient);
+	-webkit-background-clip: text;
+	background-clip: text;
+	color: transparent;
+	inset: 0 auto 0 0;
+	overflow: hidden;
+	position: absolute;
+	white-space: nowrap;
+}
+
+.value {
+	color: var(--text);
+	font-size: 0.9em;
+	font-weight: 700;
+}
+
+.count {
+	color: var(--text-dim);
+	font-size: 0.85em;
+}

@@ -6,10 +6,13 @@ import { useRouter } from 'next/router';
 
 import Layout from '../components/Layout';
 import Styles from './form.module.scss';
+import { useToast } from '../components/Toast';
+import { playSound } from '../utils/sound';
 
 const Login = () => {
 	const { data: session } = useSession();
 	const router = useRouter();
+	const toast = useToast();
 	const { redirect } = router.query;
 
 	useEffect(() => {
@@ -32,10 +35,12 @@ const Login = () => {
 				password,
 			});
 			if (result.error) {
-				alert(result.error);
+				playSound('error');
+				toast({ type: 'error', title: 'Sign in failed', message: result.error });
 			}
 		} catch (err) {
-			alert(err);
+			playSound('error');
+			toast({ type: 'error', title: 'Sign in failed', message: String(err) });
 		}
 	};
 

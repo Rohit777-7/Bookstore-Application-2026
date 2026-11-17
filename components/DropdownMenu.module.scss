@@ -3,37 +3,33 @@
 }
 
 .menu_button {
-	background-color: transparent;
-	border: 0;
-	color: #fff;
-	cursor: pointer;
-
-	&[aria-expanded='true']:before {
-		background-color: #454e3f;
-		bottom: 0;
-		content: '';
-		height: 4px;
-		left: 0;
-		position: absolute;
-		right: 0;
-		transition: all ease 0.2s;
-	}
+	font: inherit;
 }
 
 .menu_wrap {
-	background-color: #fff;
-	border-radius: 6px;
-	box-shadow: 0px -1px 10px 1px rgb(0 0 0 / 10%);
+	animation: menuIn 0.3s var(--ease-out) both;
+	backdrop-filter: blur(18px);
+	background: var(--glass-strong);
+	border: 1px solid var(--border-strong);
+	border-radius: 16px;
+	box-shadow: var(--shadow-2);
 	min-width: 220px;
 	padding: 8px;
 	position: absolute;
 	right: 0;
-	top: 65px;
-	z-index: 2;
+	top: calc(100% + 12px);
+	transform-origin: top right;
+	z-index: 20;
+}
+
+@keyframes menuIn {
+	from {
+		opacity: 0;
+		transform: translateY(-8px) scale(0.96);
+	}
 }
 
 .menu_item {
-	color: #000;
 	display: block;
 	margin: 0;
 
@@ -41,17 +37,21 @@
 	> a {
 		background-color: transparent;
 		border: 0;
-		border-radius: 6px;
+		border-radius: 10px;
+		color: var(--text);
+		cursor: pointer;
 		display: block;
-		font-size: inherit;
-		padding: 10px 15px;
+		font: inherit;
+		font-size: 14px;
+		padding: 11px 14px;
 		text-align: left;
+		transition: background 0.2s, color 0.2s, padding 0.3s var(--ease-out);
 		width: 100%;
 
 		&:hover {
-			background-color: #76836e;
-			color: #fff;
-			cursor: pointer;
+			background: var(--surface-2);
+			color: var(--gold);
+			padding-left: 20px;
 		}
 	}
 }

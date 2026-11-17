@@ -2,6 +2,7 @@ import axios from 'axios';
 import Link from 'next/link';
 import React, { useEffect, useReducer } from 'react';
 import Layout from '../components/Layout';
+import InvoiceButton from '../components/InvoiceButton';
 import TableStyles from './table.module.scss';
 
 function reducer(state, action) {
@@ -59,6 +60,7 @@ function OrderHistoryScreen() {
 									<th>Paid</th>
 									<th>Delivered</th>
 									<th>Action</th>
+									<th>Invoice</th>
 								</tr>
 							</thead>
 							<tbody>
@@ -69,21 +71,9 @@ function OrderHistoryScreen() {
 											{order.createdAt.substring(0, 10)}
 										</td>
 										<td>Rs.{order.totalPrice}</td>
+										<td>{order.isPaid ? order.paidAt?.substring(0, 10) : 'not paid'}</td>
 										<td>
-											{order.isPaid
-												? `${order.paidAt.substring(
-														0,
-														10
-												  )}`
-												: 'not paid'}
-										</td>
-										<td>
-											{order.isDelivered
-												? `${order.deliveredAt.substring(
-														0,
-														10
-												  )}`
-												: 'not delivered'}
+											{order.isDelivered ? order.deliveredAt?.substring(0, 10) : 'not delivered'}
 										</td>
 										<td className={TableStyles.table_link}>
 											<Link
@@ -92,6 +82,9 @@ function OrderHistoryScreen() {
 											>
 												Details
 											</Link>
+										</td>
+										<td>
+											<InvoiceButton order={order} variant="link" />
 										</td>
 									</tr>
 								))}

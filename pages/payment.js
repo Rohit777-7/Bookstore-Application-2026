@@ -6,6 +6,8 @@ import Layout from '../components/Layout';
 import Styles from './form.module.scss';
 import CheckoutProgress from '../components/CheckoutProgress';
 import { Store } from '../utils/Store';
+import { useToast } from '../components/Toast';
+import { playSound } from '../utils/sound';
 
 const Payment = () => {
 	const paymentMethods = ['Stripe', 'CashOnDelivery'];
@@ -16,12 +18,14 @@ const Payment = () => {
 	const { shippingAddress, paymentMethod } = cart;
 
 	const router = useRouter();
+	const toast = useToast();
 
 	const submitHandler = (e) => {
 		e.preventDefault();
 
 		if (!selectedPaymentMethod) {
-			return alert('Payment method is required');
+			playSound('error');
+			return toast({ type: 'error', title: 'Choose a payment method', message: 'Payment method is required.' });
 		}
 
 		dispatch({
