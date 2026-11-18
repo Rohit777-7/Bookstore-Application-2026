@@ -1,4 +1,4 @@
-import { getSession } from 'next-auth/react';
+import { getServerSession } from '../../../utils/auth';
 import bcryptjs from 'bcryptjs';
 import User from '../../../models/User';
 import db from '../../../utils/db';
@@ -8,7 +8,7 @@ async function handler(req, res) {
 		return res.status(400).send({ message: `${req.method} not supported` });
 	}
 
-	const session = await getSession({ req });
+	const session = await getServerSession(req, res);
 	if (!session) {
 		return res.status(401).send({ message: 'signin required' });
 	}

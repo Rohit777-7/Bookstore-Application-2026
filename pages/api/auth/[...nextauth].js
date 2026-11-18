@@ -4,7 +4,9 @@ import bcryptjs from 'bcryptjs';
 import User from '../../../models/User';
 import db from '../../../utils/db';
 
-export default NextAuth({
+// Shared with API routes so they can read the session directly on the server
+// (see utils/auth.js) instead of making an HTTP call to NEXTAUTH_URL.
+export const authOptions = {
 	session: {
 		strategy: 'jwt',
 	},
@@ -44,4 +46,6 @@ export default NextAuth({
 			},
 		}),
 	],
-});
+};
+
+export default NextAuth(authOptions);

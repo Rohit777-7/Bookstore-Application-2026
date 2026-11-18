@@ -1,4 +1,4 @@
-import { getSession } from 'next-auth/react';
+import { getServerSession } from '../../../utils/auth';
 import Order from '../../../models/Order';
 import Product from '../../../models/Product';
 import db from '../../../utils/db';
@@ -49,7 +49,7 @@ const handler = async (req, res) => {
 		return res.status(405).json({ message: 'Method not allowed' });
 	}
 
-	const session = await getSession({ req });
+	const session = await getServerSession(req, res);
 	if (!session?.user?.id) {
 		return res.status(401).json({ message: 'signin required' });
 	}

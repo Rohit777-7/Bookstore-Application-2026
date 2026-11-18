@@ -1,4 +1,4 @@
-import { getSession } from 'next-auth/react';
+import { getServerSession } from '../../../utils/auth';
 import Order from '../../../models/Order';
 import Product from '../../../models/Product';
 import Review from '../../../models/Review';
@@ -22,7 +22,7 @@ const handler = async (req, res) => {
 
 	if (req.method === 'GET') {
 		const reviews = await Review.find({ productSlug: slug }).sort({ updatedAt: -1 }).limit(100).lean();
-		const session = await getSession({ req });
+		const session = await getServerSession(req, res);
 		const mine = session?.user?.id
 			? reviews.find((r) => String(r.user) === String(session.user.id)) || null
 			: null;
@@ -34,7 +34,7 @@ const handler = async (req, res) => {
 	}
 
 	if (req.method === 'POST') {
-		const session = await getSession({ req });
+		const session = await getServerSession(req, res);
 		if (!session?.user?.id) {
 			return res.status(401).json({ message: 'Please sign in to write a review' });
 		}
